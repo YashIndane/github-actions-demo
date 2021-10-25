@@ -27,3 +27,12 @@ jobs:
     - name: Running code
       run: |
         python3 app.py
+       
+    - name: Build & push Docker image
+      uses: mr-smithers-excellent/docker-build-push@v5
+      with:
+       image: actionsdemo
+       tags: v1, latest
+       registry: docker.io
+       username: ${{ secrets.DOCKERHUB_USERNAME }}
+       password: ${{ secrets.DOCKERHUB_PASSWORD }}    
