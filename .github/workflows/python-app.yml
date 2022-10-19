@@ -1,37 +1,45 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+name: Docker Build/Publish Image 
 
-name: Python application demo
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  Print:
-
-    runs-on: ubuntu-latest
-
-    steps:
+on:  
+  push:    
+    branches: [ master ]  
     
-    - name: doing checkout
-      uses: actions/checkout@v2
+jobs:   
+
+  build:    
+    runs-on: ubuntu-18.04    
     
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
+    env:      
+      DOCKER_REGISTRY: docker.io      
+      DOCKER_IMAGE: yashindane/demoarm     
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}  
+      DOCKER_TARGET_PLATFORM: linux/arm64/v8  
+      
+    steps:   
+    
+    - name: Checkout the code       
+      uses: actions/checkout@v1  
+      
+    - name: Set up Docker Buildx      
+      uses: crazy-max/ghaction-docker-buildx@v1      
+      with:        
+        version: latest    
         
-    - name: Running code
-      run: |
-        python3 app.py
-       
-    - name: Build & push Docker image
-      uses: mr-smithers-excellent/docker-build-push@v5
-      with:
-       image: yashindane/actionsdemo
-       tags: arm64v8
-       registry: docker.io
-       platform: linux/arm64/v8
-       username: ${{ secrets.DOCKERHUB_USERNAME }}
-       password: ${{ secrets.DOCKERHUB_PASSWORD }}    
+    - name: Prepare      
+      if: success()      
+      id: prepare      
+      run: |        
+        echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}        
+        echo ::set-output name=docker_image::${DOCKER_REGISTRY}/${DOCKER_IMAGE}        
+        echo ::set-output name=version::${GITHUB_RUN_NUMBER}    
+        
+    - name: Docker Login      
+      if: success()      
+      run: |        
+        echo "${DOCKER_PASSWORD}" | docker login ${DOCKER_REGISTRY} --username "${DOCKER_USERNAME}" --password-stdin
+        
+    - name: Run Buildx (push image)      
+      if: success()      
+      run: |        
+        docker buildx build \        --platform ${{ steps.prepare.outputs.docker_platform }} \        --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \        --file ./Dockerfile \        --output type=image,push=true .
