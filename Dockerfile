@@ -1,4 +1,4 @@
-FROM amazonlinux:latest
+FROM docker.io/arm64v8/amazonlinux:latest
 
 EXPOSE 80
 
