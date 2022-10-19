@@ -7,13 +7,13 @@ on:
 jobs:   
 
   build:    
-    runs-on: ubuntu-18.04    
+    runs-on: ubuntu-22.04  
     
     env:      
       DOCKER_REGISTRY: docker.io      
       DOCKER_IMAGE: yashindane/demoarm     
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}  
+      DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}  
       DOCKER_TARGET_PLATFORM: linux/arm64/v8  
       
     steps:   
@@ -24,7 +24,7 @@ jobs:
     - name: Set up Docker Buildx      
       uses: crazy-max/ghaction-docker-buildx@v1      
       with:        
-        version: latest    
+        buildx-version: latest    
         
     - name: Prepare      
       if: success()      
