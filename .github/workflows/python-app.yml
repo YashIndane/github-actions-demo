@@ -13,7 +13,7 @@ jobs:
       DOCKER_REGISTRY: docker.io      
       DOCKER_IMAGE: yashindane/demoarm     
       DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}  
+      DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_AT }}  
       DOCKER_TARGET_PLATFORM: linux/arm64/v8  
       
     steps:   
