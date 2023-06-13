@@ -1,0 +1,16 @@
+name: Testing pull request
+
+on: 
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  get-details:
+    name: get-details
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v1
+      - name: print details
+        run: cat index.html
