@@ -14,3 +14,13 @@ jobs:
         uses: actions/checkout@v1
       - name: print details
         run: cat index.html
+        
+  py-details:
+    name: index-details
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v1
+      - name: print py details
+        run: cat app.py
